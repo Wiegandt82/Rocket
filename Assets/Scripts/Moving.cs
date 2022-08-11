@@ -29,15 +29,14 @@ public class Moving : MonoBehaviour
         {
             rb.AddRelativeForce(Vector3.up * Time.deltaTime * mainThrust);
 
-            if (!audioSource.isPlaying) //to make sure we only play if we aren't already playing
+            if(!audioSource.isPlaying) //to make sure we only play if we aren't already playing
             {
                 audioSource.Play();
             }
-            else
-            {
-                audioSource.Stop(); //stop our SFX when we aren't thrusting
-            }
-            
+        }
+        else
+        {
+            audioSource.Stop(); //stop our SFX when we aren't thrusting
         }
     }
 
