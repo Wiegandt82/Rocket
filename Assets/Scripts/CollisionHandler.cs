@@ -17,17 +17,32 @@ public class CollisionHandler : MonoBehaviour
     AudioSource audioSource;
 
     bool isTransitioning = false; //to apply SFX twice
-    
+    bool collisionDisabled = false;
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>(); 
-        
+        audioSource = GetComponent<AudioSource>();
     }
 
+    private void Update()
+    {
+        DebugKeys();
+    }
+    void DebugKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled;       //it will toggle collision
+            
+        }
+    }
     void OnCollisionEnter(Collision other)
     {
-        if (isTransitioning) { return; }
+        if (isTransitioning || collisionDisabled) { return; }
             switch (other.gameObject.tag)
             {
                 case "Friendly":
@@ -68,7 +83,6 @@ public class CollisionHandler : MonoBehaviour
     void ReloadLevel() //Resets level if failed
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-
         SceneManager.LoadScene(currentSceneIndex);
     }
 

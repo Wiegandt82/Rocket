@@ -39,23 +39,11 @@ public class Moving : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rb.AddRelativeForce(Vector3.up * Time.deltaTime * mainThrust);
-            
-            if(!audioSource.isPlaying) //to make sure we only play if we aren't already playing
-            {
-                audioSource.PlayOneShot(mainEngine);
-            }
-
-            if (!mainThrustParticle.isPlaying)
-            {
-                mainThrustParticle.Play();
-            }
-            
+            StartThrusting();
         }
         else
         {
-            audioSource.Stop(); //stop our SFX when we aren't thrusting
-            mainThrustParticle.Stop();
+            StopThrusting();
         }
     }
 
@@ -63,27 +51,65 @@ public class Moving : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            if (!ThrustParticleRight.isPlaying)
-            {
-                ThrustParticleRight.Play();
-            }
-
-            ApplyRotation(rotateThrust);
+            RotateLeft();
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            if (!ThrustParticleLeft.isPlaying)
-            {
-                ThrustParticleLeft.Play();
-            }
-            
-            ApplyRotation(-rotateThrust);
+            RotateRight();
         }
         else
         {
-            ThrustParticleRight.Stop();
-            ThrustParticleLeft.Stop();
+            StopRotating();
         }
+    }
+
+    
+
+    void StartThrusting()
+    {
+        rb.AddRelativeForce(Vector3.up * Time.deltaTime * mainThrust);
+
+        if (!audioSource.isPlaying) //to make sure we only play if we aren't already playing
+        {
+            audioSource.PlayOneShot(mainEngine);
+        }
+
+        if (!mainThrustParticle.isPlaying)
+        {
+            mainThrustParticle.Play();
+        }
+    }
+
+    private void StopThrusting()
+    {
+        audioSource.Stop(); //stop our SFX when we aren't thrusting
+        mainThrustParticle.Stop();
+    }
+
+    private void RotateLeft()
+    {
+        if (!ThrustParticleRight.isPlaying)
+        {
+            ThrustParticleRight.Play();
+        }
+
+        ApplyRotation(rotateThrust);
+    }
+
+    private void RotateRight()
+    {
+        if (!ThrustParticleLeft.isPlaying)
+        {
+            ThrustParticleLeft.Play();
+        }
+
+        ApplyRotation(-rotateThrust);
+    }
+
+    private void StopRotating()
+    {
+        ThrustParticleRight.Stop();
+        ThrustParticleLeft.Stop();
     }
 
     void ApplyRotation(float roataionThisFrame)
@@ -92,6 +118,4 @@ public class Moving : MonoBehaviour
         transform.Rotate(Vector3.forward * Time.deltaTime * roataionThisFrame);
         rb.freezeRotation = false; //unfreezing rotation so phisic system can take over
     }
-
-
 }
