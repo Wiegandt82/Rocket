@@ -4,36 +4,63 @@ using System.Collections.Generic;
 
 public class CollisionHandler : MonoBehaviour
 {
-    [SerializeField] float levelLoadDelay = 2f; 
+    [SerializeField] float levelLoadDelay = 2f;
+
+    //Audio
+    [SerializeField] AudioClip success;
+    [SerializeField] AudioClip death;
+
+    //Particles
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
+
+    AudioSource audioSource;
+
+    bool isTransitioning = false; //to apply SFX twice
+    
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>(); 
+        
+    }
+
     void OnCollisionEnter(Collision other)
     {
-        switch (other.gameObject.tag)
-        {
-            case "Friendly":
-                Debug.Log("This is Friendly");
-                break;
-            case "Finish":
-                StartSuccessSequence();
-                
-                break;
-            case "Fuel":
-                Debug.Log("Fuel");
-                break;
-            default:
-                StartCrashSequence();
-                break;
-        }
+        if (isTransitioning) { return; }
+            switch (other.gameObject.tag)
+            {
+                case "Friendly":
+                    Debug.Log("This is Friendly");
+                    break;
+                case "Finish":
+                    StartSuccessSequence();
+                    break;
+                case "Fuel":
+                    Debug.Log("Fuel");
+                    break;
+                default:
+                    StartCrashSequence();
+                    break;
+            }
+        
     }
     void StartSuccessSequence()
     {
-        GetComponent<Moving>().enabled = false;
-        Invoke("LoadNextLevel", levelLoadDelay);
+        isTransitioning = true;
+        audioSource.Stop();                     //stop all sounds 
+        successParticles.Play();
+        audioSource.PlayOneShot(success);
+        GetComponent<Moving>().enabled = false; //stop moving
+        Invoke("LoadNextLevel", levelLoadDelay);// Invoke with delay
     }
 
     void StartCrashSequence()
     {
-        //to do add crash SFX element
-        //to do add particle effect
+        isTransitioning = true;
+        audioSource.Stop();
+        deathParticles.Play();
+        audioSource.PlayOneShot(death);
         GetComponent<Moving>().enabled = false; //turn off moving
         Invoke("ReloadLevel", levelLoadDelay);
     }
